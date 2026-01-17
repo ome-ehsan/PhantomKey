@@ -1,0 +1,4 @@
+# Core Computer Vision (Feat 1, 4, 5)
+opencv-python>=4.8.0      # For video capture (Layer 46) and rendering (Layer 66)
+mediapipe>=0.10.0         # For Hand Tracking (Feat 1) and Face Mesh (Feat 4)
+numpy>=1.24.0             # For coordinate math and scrambling arrays
