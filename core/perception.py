@@ -30,7 +30,7 @@ class PerceptionEngine:
         # brg to rgb
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
-        # yo improve performance, image kept read only 
+        # to improve performance, image kept read only 
         frame_rgb.flags.writeable = False
         
         # running inference 

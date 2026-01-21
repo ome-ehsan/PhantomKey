@@ -15,7 +15,7 @@ class StateMachine:
         self.last_click_time = 0
         self.debounce_duration = 0.5  # 0.5s lockout
 
-    def update(self, hand_results, face_results):
+    def update(self, hand_results, face_results, is_hovering=False):
         current_time = time.time()
         #no face detected m immediate lockdown 
         if not face_results.multi_face_landmarks:
@@ -29,10 +29,12 @@ class StateMachine:
             else:
                 return AppState.DEBOUNCE
 
+        # hand Presence & hover Interaction
         if hand_results.multi_hand_landmarks:
-            # both hand and face = active state 
-            # (hover logic goes here )
-            self.current_state = AppState.TRACKING
+            if is_hovering:
+                self.current_state = AppState.HOVER
+            else:
+                self.current_state = AppState.TRACKING
         else:
             self.current_state = AppState.IDLE
 
