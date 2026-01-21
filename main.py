@@ -1,47 +1,48 @@
 import cv2
 import config
 from core.perception import PerceptionEngine
+from core.state_machine import StateMachine, AppState
 
 def main():
-
-
     # setup Camera
     cap = cv2.VideoCapture(0)
     cap.set(3, config.CAM_WIDTH)
     cap.set(4, config.CAM_HEIGHT)
 
-    # init perception layer 
+    # Initialize Layers 1 & 2
     perception = PerceptionEngine()
+    brain = StateMachine()
 
-    print("[PhantomKey Perception Layer Initialized]")
+    print("PhantomKey: Perception & State Machine Initialized.")
 
     while True:
         success, frame = cap.read()
-        if not success:
-            print("Ignoring empty camera frame.")
-            continue
+        if not success: continue
 
-        # Flip the frame horizontally for a later selfie-view display
         frame = cv2.flip(frame, 1)
 
-        # PROCESS FRAME: Get Hand & Face Data
+        # perception layer
         hand_results, face_results = perception.process_frame(frame)
 
-        # VISUALIZE: Draw the skeleton to prove it works
+        #state machine state 
+        current_state = brain.update(hand_results, face_results)
+
+        # debugging visualization
         perception.draw_debug(frame, hand_results, face_results)
         
-        # Display Status
-        status_text = "[System: OK]"
-        if not face_results.multi_face_landmarks:
-             # Feature 4: Liveness Check Fail
-            status_text = "LOCKED: No Face Detected" 
-            cv2.putText(frame, status_text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-        else:
-             cv2.putText(frame, status_text, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # colors represents states 
+        color = (0, 255, 0) # Green for Good
+        if current_state == AppState.LOCKED:
+            color = (0, 0, 255) # Red for Locked
+        elif current_state == AppState.IDLE:
+            color = (255, 255, 0) # Cyan for Idle
 
-        cv2.imshow('PhantomKey - Perception Layer', frame)
+        cv2.putText(frame, f"STATE: {current_state.value}", (50, 50), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
-        if cv2.waitKey(5) & 0xFF == 27: # Press ESC to exit
+        cv2.imshow('PhantomKey Alpha', frame)
+
+        if cv2.waitKey(5) & 0xFF == 27:
             break
 
     cap.release()
