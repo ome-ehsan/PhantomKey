@@ -3,18 +3,16 @@ from tensorflow.keras import layers, models
 import pathlib
 import os
 
-# 1. SETUP
-# Define paths and parameters
+#paths and params
 DATA_DIR = pathlib.Path("dataset")
 IMG_HEIGHT = 128
 IMG_WIDTH = 128
-BATCH_SIZE = 16 # Small batch size for small dataset
+BATCH_SIZE = 16 # small batch due to small datasets 
 
 print(f"TensorFlow Version: {tf.__version__}")
 print("Loading data...")
 
-# 2. LOAD DATA
-# We use a 80/20 split: 80% for training, 20% for testing
+# loading data 80/20
 train_ds = tf.keras.utils.image_dataset_from_directory(
     DATA_DIR,
     validation_split=0.2,
@@ -35,26 +33,27 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 
 class_names = train_ds.class_names
 print(f"Classes found: {class_names}") 
-# EXPECTED OUTPUT: ['click', 'none'] (Order might vary)
 
-# Optimize performance
+
+# optimizing performance
 AUTOTUNE = tf.data.AUTOTUNE
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
-# 3. BUILD MODEL (CNN)
 num_classes = len(class_names)
 
+
+# the CNN 
 model = models.Sequential([
     # Input & Rescaling
     layers.Rescaling(1./255, input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)),
     
-    # Data Augmentation (Makes model robust to angles)
+    # data aug 
     layers.RandomFlip("horizontal"),
     layers.RandomRotation(0.1),
     layers.RandomZoom(0.1),
 
-    # Convolutions (The "Vision" part)
+    # conv 2D
     layers.Conv2D(16, 3, padding='same', activation='relu'),
     layers.MaxPooling2D(),
     
@@ -64,7 +63,7 @@ model = models.Sequential([
     layers.Conv2D(64, 3, padding='same', activation='relu'),
     layers.MaxPooling2D(),
     
-    # Classification (The "Decision" part)
+    # Classification 
     layers.Flatten(),
     layers.Dense(128, activation='relu'),
     layers.Dense(num_classes) # Output layer
@@ -74,7 +73,7 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-# 4. TRAIN
+# training 
 print("Starting Training...")
 epochs = 15 
 history = model.fit(
@@ -83,20 +82,20 @@ history = model.fit(
     epochs=epochs
 )
 
-# 5. EXPORT TO TFLITE
+
+
 print("Converting to TFLite...")
-# Convert the Keras model to TensorFlow Lite
+# converting to TF lite model
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
 
-# Save the model
+# saving 
 if not os.path.exists("models"):
     os.makedirs("models")
     
 with open('models/gesture_model.tflite', 'wb') as f:
     f.write(tflite_model)
 
-# Save the labels too, so we know which ID is "click"
 with open('models/labels.txt', 'w') as f:
     for name in class_names:
         f.write(name + '\n')
