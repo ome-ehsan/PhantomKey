@@ -7,3 +7,7 @@ __pycache__/
 # Virtual environments
 venv/
 .env/
+
+#dataset
+dataset/
+dataset.zip
