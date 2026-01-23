@@ -4,7 +4,7 @@ import pathlib
 import os
 
 #paths and params
-DATA_DIR = pathlib.Path("dataset")
+DATA_DIR = pathlib.Path("dataset_cropped")
 IMG_HEIGHT = 128
 IMG_WIDTH = 128
 BATCH_SIZE = 16 # small batch due to small datasets 
