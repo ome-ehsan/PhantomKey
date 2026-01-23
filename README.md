@@ -54,8 +54,8 @@ I developed a benchmarking script (`benchmark.py`) to test both models against a
 | Metric | Heuristic (Math) | Neural Network (CNN) |
 |--------|------------------|----------------------|
 | **Accuracy** | **88.54%** | **99.43%** |
-| **False Positives** | **0** | 0 |
-| **False Negatives** | 43 | 0 |
+| **False Positives** | **78** | 4 |
+| **False Negatives** | 2 | 0 |
 
 ### 3. The "Accuracy Paradox"
 
