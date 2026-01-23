@@ -1,0 +1,19 @@
+==========================================
+      PHANTOMKEY ACCURACY BENCHMARK       
+==========================================
+
+Model: Math (Euclidean)
+------------------------------------------
+Accuracy:      86.13%
+True Positives: 110 (Clicked correctly)
+False Positives:0 (Clicked when didn't mean to)
+True Negatives: 157 (Ignored correctly)
+False Negatives:43 (Ignored a real click)
+
+Model: Neural Network (CNN)
+------------------------------------------
+Accuracy:      100.00%
+True Positives: 153 (Clicked correctly)
+False Positives:0 (Clicked when didn't mean to)
+True Negatives: 157 (Ignored correctly)
+False Negatives:0 (Ignored a real click)

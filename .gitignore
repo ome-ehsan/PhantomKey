@@ -9,5 +9,6 @@ venv/
 .env/
 
 #dataset
-dataset/
+dataset_cropped/
 dataset.zip
+dataset/
